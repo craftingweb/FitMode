@@ -1,5 +1,8 @@
 "use server";
 
+import { hashUserPassword } from "@/lib/hash";
+import { createUser } from "@/lib/user";
+
 // server actions are async functions
 
 export async function signup(prevState, formData) {
@@ -22,4 +25,6 @@ export async function signup(prevState, formData) {
     };
   }
   //   store in db (create a new user)
+  const hashedPassword = hashUserPassword(password);
+  createUser(email, hashedPassword);
 }
