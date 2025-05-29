@@ -2,6 +2,7 @@
 
 import { hashUserPassword } from "@/lib/hash";
 import { createUser } from "@/lib/user";
+import { redirect } from "next/navigation";
 
 // server actions are async functions
 
@@ -26,5 +27,17 @@ export async function signup(prevState, formData) {
   }
   //   store in db (create a new user)
   const hashedPassword = hashUserPassword(password);
-  createUser(email, hashedPassword);
+  try {
+    createUser(email, hashedPassword);
+  } catch (error) {
+    if (error.code === "SQLITE_CONSTRAINT_UNIQUE") {
+      return {
+        errors: {
+          email: "It seems like account for already chosen user",
+        },
+      };
+    }
+    throw error;
+  }
+  redirect("/training");
 }
